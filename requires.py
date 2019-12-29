@@ -7,18 +7,16 @@ class NetworkInterfaceRequires(Endpoint):
 
     @when_any("endpoint.{endpoint_name}.joined", "endpoint.{endpoint_name}.changed")
     def check_interface_info(self):
-        """Validate data recieved from provider."""
-        interface = self.all_joined_units.received.get("interface", None)
-        mtu = self.all_joined_units.received.get("mtu", None)
-        hwtype = self.all_joined_units.received.get("type", None)
-        mac = self.all_joined_units.received.get("mac", None)
-        addresses = self.all_joined_units.received.get("addresses", None)
-        routes = self.all_joined_units.received.get("routes", None)
-        nameservers = self.all_joined_units.received.get("nameservers", None)
-        if interface and mtu and hwtype:
-            set_flag(self.expand_name("available"))
-            return (interface, hwtype, mtu, mac, addresses, routes, nameservers)
-        return None
+        """Validate data recieved from provider is a list of interfaces with a dict for each interface."""
+        interfaces = self.all_joined_units.received.get("interfaces", None)
+        if type(interfaces) == 'list':
+            for interface in interfaces:
+                if type(interface) != 'dict':
+                    return None
+        else:
+            return None
+        set_flag(self.expand_name("available"))
+        return interfaces
 
     @when("endpoint.{endpoint_name}.departed")
     def process_relation_departed(self):
