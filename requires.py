@@ -9,9 +9,9 @@ class NetworkInterfaceRequires(Endpoint):
     def check_interface_info(self):
         """Validate data recieved from provider is a list of interfaces with a dict for each interface."""
         interfaces = self.all_joined_units.received.get("interfaces", None)
-        if type(interfaces) == 'list':
+        if type(interfaces) == "list":
             for interface in interfaces:
-                if type(interface) != 'dict':
+                if type(interface) != "dict":
                     return None
         else:
             return None
